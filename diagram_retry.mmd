@@ -1,0 +1,25 @@
+flowchart TD
+    Start([Mulai: Scheduler Retry Harian]) --> FetchFailed[Pilih Tagihan Status 'Failed']
+    
+    FetchFailed --> CheckEligible{Memenuhi Syarat Retry?<br/>- Kesediaan Masih Aktif<br/>- Retry Count < 3}
+    
+    CheckEligible -- Tidak --> MarkFinal[Tandai Status: Failed-Final]
+    CheckEligible -- Ya --> CheckPending{Ada Status Pending / Unknown<br/>pada Periode Ini?}
+    
+    CheckPending -- Ya --> WaitReconcile[Tunggu Rekonsiliasi Status]
+    CheckPending -- Tidak --> ExecRetry[Jalankan Retry dengan Kunci Idempotensi]
+    
+    ExecRetry --> UpdateCount[Tambahkan Retry Count +1]
+    UpdateCount --> CheckResult{Hasil Retry?}
+    
+    CheckResult -- Sukses --> SaveSuccess[Update Status: Succeeded]
+    CheckResult -- Gagal & Limit Tercapai --> MarkFinal
+    CheckResult -- Gagal & Limit Belum Tercapai --> KeepFailed[Tetap Status: Failed untuk Retry Berikutnya]
+    
+    SaveSuccess --> Notify[Kirim Notifikasi Sukses]
+    MarkFinal --> NotifyFailed[Kirim Notifikasi Kegagalan Final / Rekonsiliasi]
+    
+    Notify --> End([Selesai])
+    NotifyFailed --> End
+    KeepFailed --> End
+    WaitReconcile --> End
