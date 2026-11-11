@@ -1,0 +1,29 @@
+flowchart TD
+    Start([Mulai: Scheduler Berjalan]) --> FetchDue[Cari Kesediaan Aktif yang Jatuh Tempo]
+    FetchDue --> CheckStatus{Status Kesediaan<br/>& Periode Valid?}
+    
+    CheckStatus -- Tidak --> Skip[Lewati & Catat Log]
+    CheckStatus -- Ya --> GenIdem[Buat / Ambil Kunci Idempotensi]
+    
+    GenIdem --> SendReq[Kirim Permintaan Penagihan ke Payment Gateway]
+    SendReq --> LogReq[Catat ID Korelasi & Status Awal]
+    
+    LogReq --> CheckResp{Respons Gateway?}
+    
+    CheckResp -- Sukses --> SaveSuccess[Simpan Status: Succeeded]
+    CheckResp -- Gagal --> SaveFailed[Simpan Status: Failed]
+    CheckResp -- Timeout / Unknown --> SaveUnknown[Simpan Status: Processing / Unknown]
+    
+    SaveUnknown --> Reconcile[Jalankan Pemeriksaan Status / Rekonsiliasi]
+    Reconcile --> CheckResp
+    
+    SaveSuccess --> Notify[Kirim Notifikasi Hasil & Trigger Integrasi Internal]
+    SaveFailed --> CheckRetryEligible{Memenuhi Syarat<br/>Retry?}
+    
+    CheckRetryEligible -- Ya --> QueueRetry[Masukkan ke Antrean Retry Harian]
+    CheckRetryEligible -- Tidak --> MarkFinal[Tandai Failed-Final]
+    
+    Notify --> End([Selesai])
+    QueueRetry --> End
+    MarkFinal --> End
+    Skip --> End
