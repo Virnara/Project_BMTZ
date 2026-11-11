@@ -24,3 +24,8 @@
 | **ALT-06** | Pengiriman tanda terima gagal | Jangan mengubah status pembayaran hanya karena tanda terima gagal dikirim. Catat kegagalan terpisah dari status transaksi; aturan pengiriman ulang perlu ditetapkan. | [PERLU KLARIFIKASI]. |
 | **ALT-07** | Permintaan jeda/pembatalan saat tagihan sedang diproses | Periksa status dan aturan efektif jeda/pembatalan sebelum mengubah jadwal; hindari menjanjikan bahwa transaksi yang sudah berjalan pasti dapat dihentikan. | Workbook menyebut fitur jeda/batal; aturan waktu efektif [PERLU KLARIFIKASI]. |
 | **ALT-08** | Permintaan tagihan/hasil gateway terduplikasi | Gunakan referensi transaksi unik dan mekanisme pencegahan pencatatan ganda yang disepakati. | Kebutuhan mencegah duplikasi [PERLU KLARIFIKASI] pada detail teknis dan kontrak. |
+
+### 3.3 Use Case Diagram
+Sebagai gambaran visual interaksi batas sistem dan aktor, berikut adalah rancangan *Use Case Diagram*:
+
+![Use Case Diagram Donasi Berulang](images/usecase.jpeg)
